@@ -24,7 +24,11 @@ import (
 // deleted. Once a container is deleted its ID MAY be used by a subsequent
 // container.
 func deleteCommand() *cobra.Command {
-	return &cobra.Command{
+	var (
+		force bool
+	)
+
+	delete := &cobra.Command{
 		Use:   "delete <container-id>",
 		Short: "Delete a container",
 		Args:  cobra.ExactArgs(1),
@@ -35,12 +39,14 @@ func deleteCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			running, err := jail.IsRunning(cmd.Context(), id, 0)
-			if err != nil {
-				return fmt.Errorf("delete: failed to determine if jail is running: %w", err)
-			}
-			if running {
-				return fmt.Errorf("delete: jail %s is not stopped", id)
+			if !force {
+				running, err := jail.IsRunning(cmd.Context(), id, 0)
+				if err != nil {
+					return fmt.Errorf("delete: failed to determine if jail is running: %w", err)
+				}
+				if running {
+					return fmt.Errorf("delete: jail %s is not stopped", id)
+				}
 			}
 			err = jail.CleanupEntrypoint(id)
 			if err != nil {
@@ -65,4 +71,7 @@ func deleteCommand() *cobra.Command {
 			return state.Remove(id)
 		},
 	}
+	flags := delete.Flags()
+	flags.BoolVar(&force, "force", false, "???")
+	return delete
 }
