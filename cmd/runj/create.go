@@ -160,6 +160,15 @@ written`)
 		} else if consoleSocket != "" {
 			return errors.New("console-socket provided but Process.Terminal is false")
 		}
+
+		var parentJail jail.Jail = nil
+		if parentJailName, ok := ociConfig.Annotations["org.freebsd.parentJail"]; ok {
+			parentJail, err = jail.FromName(parentJailName)
+			if err != nil {
+				return err
+			}
+		}
+
 		var confPath string
 		confPath, err = jail.CreateConfig(&jail.Config{
 			Name:     id,
@@ -169,11 +178,10 @@ written`)
 		if err != nil {
 			return err
 		}
-		var j jail.Jail
-		if j, err = jail.CreateJail(cmd.Context(), confPath); err != nil {
-			return err
-		}
-		s.JID = int(j.JID())
+
+		// Mount volumes before attaching to the parent jail
+		// (if any) so that we don't need to rely on the
+		// parent jail having allow.mount.* capabilities.
 		err = jail.Mount(id, ociConfig)
 		if err != nil {
 			return err
@@ -184,6 +192,15 @@ written`)
 			}
 			jail.Unmount(id, ociConfig)
 		}()
+
+		if parentJail != nil {
+			parentJail.Attach()
+		}
+		var j jail.Jail
+		if j, err = jail.CreateJail(cmd.Context(), confPath); err != nil {
+			return err
+		}
+		s.JID = int(j.JID())
 
 		// Setup and start the "runj-entrypoint" helper program in order to
 		// get the container STDIO hooked up properly.

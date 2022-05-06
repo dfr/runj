@@ -65,8 +65,9 @@ func killCommand() *cobra.Command {
 		if err != nil {
 			return err
 		}
+		jid := strconv.Itoa(s.JID)
 		if s.Status == state.StatusRunning {
-			if ok, err := jail.IsRunning(cmd.Context(), id, s.PID); err != nil {
+			if ok, err := jail.IsRunning(cmd.Context(), jid, s.PID); err != nil {
 				return err
 			} else if !ok {
 				s.Status = state.StatusStopped
@@ -82,9 +83,9 @@ func killCommand() *cobra.Command {
 			pid = s.PID
 		}
 		if all {
-			return jail.KillAll(cmd.Context(), id, signal)
+			return jail.KillAll(cmd.Context(), jid, signal)
 		}
-		return jail.Kill(cmd.Context(), id, pid, signal)
+		return jail.Kill(cmd.Context(), jid, pid, signal)
 	}
 	return kill
 }

@@ -17,6 +17,10 @@ const (
 {{- if ne .Hostname "" }}
   host.hostname = "{{.Hostname}}";
 {{- end }}
+  ip4 = inherit;
+  ip6 = inherit;
+  allow.raw_sockets;
+  allow.chflags;
   persist;
 }
 `

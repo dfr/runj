@@ -35,11 +35,12 @@ type Spec struct {
 
 	// Mounts configures additional mounts (on top of Root).
 	Mounts []Mount `json:"mounts,omitempty"`
+
+	// Annotations contains arbitrary metadata for the container.
+	Annotations map[string]string `json:"annotations,omitempty"`
 	/*
 		// Hooks configures callbacks for container lifecycle events.
 		Hooks *Hooks `json:"hooks,omitempty" platform:"linux,solaris"`
-		// Annotations contains arbitrary metadata for the container.
-		Annotations map[string]string `json:"annotations,omitempty"`
 
 		// Linux is platform-specific configuration for Linux based containers.
 		Linux *Linux `json:"linux,omitempty" platform:"linux"`

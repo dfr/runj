@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"go.sbk.wtf/runj/jail"
 	"go.sbk.wtf/runj/runtimespec"
@@ -62,8 +63,9 @@ func stateCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			jid := strconv.Itoa(s.JID)
 			if s.Status == state.StatusRunning {
-				ok, err := jail.IsRunning(cmd.Context(), id, s.PID)
+				ok, err := jail.IsRunning(cmd.Context(), jid, s.PID)
 				if err != nil {
 					return err
 				}
