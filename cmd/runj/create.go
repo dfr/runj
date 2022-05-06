@@ -174,7 +174,7 @@ written`)
 			return err
 		}
 		s.JID = int(j.JID())
-		err = jail.Mount(ociConfig)
+		err = jail.Mount(id, ociConfig)
 		if err != nil {
 			return err
 		}
@@ -182,7 +182,7 @@ written`)
 			if err == nil {
 				return
 			}
-			jail.Unmount(ociConfig)
+			jail.Unmount(id, ociConfig)
 		}()
 
 		// Setup and start the "runj-entrypoint" helper program in order to
