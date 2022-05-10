@@ -8,10 +8,13 @@ import (
 )
 
 func main() {
+	var version = false
+
 	rootCmd := &cobra.Command{
 		Use:   "runj <command>",
 		Short: "runj is a skeleton OCI runtime for FreeBSD",
 	}
+	rootCmd.Flags().BoolVar(&version, "version", false, "Return runj version")
 	rootCmd.AddCommand(stateCommand())
 	rootCmd.AddCommand(createCommand())
 	rootCmd.AddCommand(startCommand())
@@ -19,6 +22,7 @@ func main() {
 	rootCmd.AddCommand(deleteCommand())
 	rootCmd.AddCommand(extCommand())
 	rootCmd.AddCommand(demoCommand())
+	rootCmd.Version = "g20211119_1"
 	err := rootCmd.Execute()
 	if err != nil {
 		code := 1
