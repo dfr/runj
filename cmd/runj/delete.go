@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"strconv"
 
 	"go.sbk.wtf/runj/jail"
 	"go.sbk.wtf/runj/oci"
@@ -39,8 +40,9 @@ func deleteCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			jid := strconv.Itoa(s.JID)
 			if !force {
-				running, err := jail.IsRunning(cmd.Context(), id, 0)
+				running, err := jail.IsRunning(cmd.Context(), jid, 0)
 				if err != nil {
 					return fmt.Errorf("delete: failed to determine if jail is running: %w", err)
 				}
