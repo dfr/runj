@@ -169,9 +169,11 @@ written`)
 		if err != nil {
 			return err
 		}
-		if err := jail.CreateJail(cmd.Context(), confPath); err != nil {
+		var j jail.Jail
+		if j, err = jail.CreateJail(cmd.Context(), confPath); err != nil {
 			return err
 		}
+		s.JID = int(j.JID())
 		err = jail.Mount(ociConfig)
 		if err != nil {
 			return err
