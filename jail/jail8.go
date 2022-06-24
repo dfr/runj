@@ -23,13 +23,3 @@ func CreateJail(ctx context.Context, confPath string) (Jail, error) {
 	}
 	return FromID(ID(id)), nil
 }
-
-// DestroyJail wraps the jail(8) command to destroy a jail
-func DestroyJail(ctx context.Context, confPath, jail string) error {
-	cmd := exec.CommandContext(ctx, "jail", "-f", confPath, "-r", jail)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, string(out))
-	}
-	return err
-}
